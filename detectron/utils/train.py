@@ -58,6 +58,7 @@ def train_model(use_tfboard=False):
     if use_tfboard:
         from c2board.writer import SummaryWriter
         tblogger = SummaryWriter(output_dir)
+        tblogger.write_graph(model)
 
     setup_model_for_training(model, weights_file, output_dir)
     training_stats = TrainingStats(model, tblogger if use_tfboard else None)
