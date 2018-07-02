@@ -89,6 +89,10 @@ def train_model(use_tfboard=False):
             model.roi_data_loader.shutdown()
             envu.exit_on_error()
 
+        for gpu_id in range(cfg.NUM_GPUS):
+            tblogger.append_image("gpu_{}/data".format(gpu_id))
+        tblogger.write_summaries(cur_iter)
+
     if use_tfboard:
         tblogger.close()
 
