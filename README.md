@@ -1,3 +1,7 @@
+# Detectron with tensorboard
+
+I use [c2board](https://github.com/endernewton/c2board) to visualize some training info of Detectron in tensorboard. It dumps the training info in the output folder of Detectron by default.
+
 # Detectron
 
 Detectron is Facebook AI Research's software system that implements state-of-the-art object detection algorithms, including [Mask R-CNN](https://arxiv.org/abs/1703.06870). It is written in Python and powered by the [Caffe2](https://github.com/caffe2/caffe2) deep learning framework.
