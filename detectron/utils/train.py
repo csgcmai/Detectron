@@ -47,7 +47,7 @@ import detectron.utils.env as envu
 import detectron.utils.net as nu
 
 
-def train_model():
+def train_model(use_tfboard=False):
     """Model training loop."""
     logger = logging.getLogger(__name__)
     model, weights_file, start_iter, checkpoints, output_dir = create_model()
@@ -55,8 +55,12 @@ def train_model():
         # The final model was found in the output directory, so nothing to do
         return checkpoints
 
+    if use_tfboard:
+        from c2board.writer import SummaryWriter
+        tblogger = SummaryWriter(output_dir)
+
     setup_model_for_training(model, weights_file, output_dir)
-    training_stats = TrainingStats(model)
+    training_stats = TrainingStats(model, tblogger if use_tfboard else None)
     CHECKPOINT_PERIOD = int(cfg.TRAIN.SNAPSHOT_ITERS / cfg.NUM_GPUS)
 
     for cur_iter in range(start_iter, cfg.SOLVER.MAX_ITER):
@@ -84,6 +88,9 @@ def train_model():
             logger.critical('Loss is NaN, exiting...')
             model.roi_data_loader.shutdown()
             envu.exit_on_error()
+
+    if use_tfboard:
+        tblogger.close()
 
     # Save the final model
     checkpoints['final'] = os.path.join(output_dir, 'model_final.pkl')

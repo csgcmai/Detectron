@@ -77,6 +77,12 @@ def parse_args():
         default=None,
         nargs=argparse.REMAINDER
     )
+    parser.add_argument(
+        '--use_tfboard',
+        dest='use_tfboard',
+        help='Use tensorboard to log training info',
+        action='store_true'
+    )
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
@@ -107,7 +113,7 @@ def main():
     # non-deterministic cudnn functions).
     np.random.seed(cfg.RNG_SEED)
     # Execute the training run
-    checkpoints = detectron.utils.train.train_model()
+    checkpoints = detectron.utils.train.train_model(args.use_tfboard)
     # Test the trained model
     if not args.skip_test:
         test_model(checkpoints['final'], args.multi_gpu_testing, args.opts)
