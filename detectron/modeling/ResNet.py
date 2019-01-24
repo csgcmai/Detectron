@@ -31,6 +31,18 @@ from detectron.utils.net import get_group_gn
 # Bits for specific architectures (ResNet50, ResNet101, ...)
 # ---------------------------------------------------------------------------- #
 
+# conv2_x  -> conv3_x -> conv4_x -> conv5_x
+
+# ResNet 50
+#  3       ->   4     ->   6      -> 3
+
+# ResNet 101
+#  3       ->   4     ->   23     -> 3
+
+# ResNet 152
+#  3       ->   8     ->   36     -> 3
+
+
 
 def add_ResNet50_conv4_body(model):
     return add_ResNet_convX_body(model, (3, 4, 6))

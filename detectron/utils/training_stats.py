@@ -37,7 +37,7 @@ import detectron.utils.net as nu
 class TrainingStats(object):
     """Track vital training statistics."""
 
-    def __init__(self, model):
+    def __init__(self, model, tensorflow_board=None):
         # Window size for smoothing tracked values (with median filtering)
         self.WIN_SZ = 20
         # Output logging period in SGD iterations
@@ -55,6 +55,9 @@ class TrainingStats(object):
         self.iter_total_loss = np.nan
         self.iter_timer = Timer()
         self.model = model
+
+        self.tblogger = tensorflow_board
+        self.tb_ignored_keys = ['iter', 'eta', 'mb_qsize', 'mem', 'time']
 
     def IterTic(self):
         self.iter_timer.tic()
@@ -88,6 +91,19 @@ class TrainingStats(object):
                 cur_iter == cfg.SOLVER.MAX_ITER - 1):
             stats = self.GetStats(cur_iter, lr)
             log_json_stats(stats)
+
+            if self.tblogger:
+                self.tb_log_stats(stats, cur_iter)
+
+    def tb_log_stats(self, stats, cur_iter):
+        """Log the tracked statistics to tensorboard"""
+        for k in stats:
+            if k not in self.tb_ignored_keys:
+                v = stats[k]
+                if isinstance(v, dict):
+                    self.tb_log_stats(v, cur_iter)
+                else:
+                    self.tblogger.write_scalars({k:v}, cur_iter)
 
     def GetStats(self, cur_iter, lr):
         eta_seconds = self.iter_timer.average_time * (
