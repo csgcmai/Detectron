@@ -1,7 +1,7 @@
-numpy>=1.13
-pyyaml>=3.12
+numpy
+pyyaml
 matplotlib
-opencv-python>=3.2
+opencv-python
 setuptools
 Cython
 mock
